@@ -6,7 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* le os numeros do arquivo e guarda no vetor, cresce o vetor com realloc */
+/* le os inteiros do arquivo linha a linha e os armazena em *vetor, que cresce
+   dinamicamente com realloc conforme necessario, comeca com capacidade para 10
+   elementos e dobra de 10 em 10, evita realocar a cada numero lido,
+   retorna 0 se ok, -1 se o arquivo nao abrir ou se tiver vazio. */
 int carregar_arquivo(char *nome_arquivo, int **vetor, int *tamanho) {
   FILE *arq;
   int *tmp;
@@ -26,7 +29,7 @@ int carregar_arquivo(char *nome_arquivo, int **vetor, int *tamanho) {
   }
 
   while (fscanf(arq, "%d", &numero) == 1) {
-    /* se encheu o espaco, aumenta mais 10 */
+    /* se a capacidade atual foi atingida, dai expande o buffer em mais 10 posicoes */
     if (n == cap) {
       cap += 10;
       tmp = (int *)realloc(*vetor, cap * sizeof(int));

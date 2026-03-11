@@ -1,5 +1,9 @@
 /*
- * main.c - Menu principal
+ * main.c - Menu principal e controle do programa
+ *
+ * Fluxo esperado: carregar arquivo (op.1) > buscar/ordenar (op.2/3) > log (op.4) > sair (op.5).
+ * O vetor principal eh mantido em memoria dinamica, dai toda ordenacao opera sobre
+ * uma copia para preservar o original ate o usuario decidir salvar.
  */
 
 #include "arquivo.h"
@@ -13,14 +17,18 @@
 #include <time.h>
 #include <windows.h>  /* QueryPerformanceCounter para timer de alta resolucao */
 
-/* limpa o lixo que fica no buffer apos o scanf */
+/* descarta os caracteres que sobram no buffer de entrada apos um scanf.
+   Eh necessario porque scanf deixa o '\n' no buffer, o que faria a proxima
+   leitura de char (como 's'/'n') capturar esse '\n' em vez da resposta real */
 void limpar_buffer() {
   int c;
   while ((c = getchar()) != '\n' && c != EOF)
     ;
 }
 
-/* Submenu de busca */
+/* Submenu de busca: permite busca linear e binaria no vetor carregado.
+   Pra cada busca, repete 10000 vezes e calcula a media para ter precisao
+   de medicao, operacoes rapidas demais zerariam com apenas 1 medicao. */
 void menu_busca(int *vetor, int tamanho) {
   int opcao, elemento;
   LARGE_INTEGER freq, inicio, fim;
@@ -52,8 +60,9 @@ void menu_busca(int *vetor, int tamanho) {
     if (opcao == 1) {
       int i, pos;
 
-      /* executa 10000 vezes para ter resolucao estatistica suficiente;
-         operacoes rapidas demais seriam zero com apenas 1 medicao */
+      /* executa 10000 vezes para ter resolucao estatistica suficiente, e operacoes 
+      rapidas demais seriam zero com apenas 1 medicao */
+
       QueryPerformanceCounter(&inicio);
       for (i = 0; i < 10000; i++)
         busca_linear(vetor, tamanho, elemento);
@@ -71,7 +80,7 @@ void menu_busca(int *vetor, int tamanho) {
       int i, pos;
       char resposta;
 
-      /* busca binaria exige vetor ordenado; se nao estiver, oferecer ordenacao */
+      /* busca binaria exige vetor ordenado, se nao estiver, oferecer ordenacao */
       if (!verificar_ordenacao(vetor, tamanho)) {
         printf("O vetor nao esta ordenado.\n");
         printf("Deseja ordenar agora com Quick Sort para prosseguir? (s/n): ");
@@ -104,10 +113,12 @@ void menu_busca(int *vetor, int tamanho) {
   } while (1);
 }
 
-/* Submenu de ordenacao */
+/* Submenu de ordenacao: executa o algoritmo escolhido sobre uma COPIA do vetor,
+   preservando o original, no final, pergunta se quer salvar e atualiza o vetor
+   principal com o resultado ordenado. */
 void menu_ordenacao(int *vetor, int tamanho) {
   int opcao, k;
-  int *copia; /* trabalha em cima da copia pra nao baguncar o original */
+  int *copia; /* copia de trabalho - preserva o vetor original durante a ordenacao */
   char nome_arquivo[256];
   char resposta;
 
@@ -118,16 +129,16 @@ void menu_ordenacao(int *vetor, int tamanho) {
     printf("3. Selection Sort\n");
     printf("4. Merge Sort\n");
     printf("5. Quick Sort\n");
-    /* printf("6. Algoritmo Extra\n"); */ /* descomentar quando algoritmo extra tiver implementado */
-    printf("6. Voltar\n");
+    printf("6. Introsort (EXTRA)\n");
+    printf("7. Voltar\n");
     printf("Escolha: ");
     scanf("%d", &opcao);
     limpar_buffer();
 
-    if (opcao == 6)
+    if (opcao == 7)
       break;
 
-    if (opcao < 1 || opcao > 5) {
+    if (opcao < 1 || opcao > 6) {
       printf("Opcao invalida.\n");
       continue;
     }
@@ -159,12 +170,10 @@ void menu_ordenacao(int *vetor, int tamanho) {
       printf("Executando Quick Sort...\n");
       quick_sort(copia, tamanho);
       break;
-    /* descomentar quando algoritmo extra estiver implementado
     case 6:
-      printf("Executando Algoritmo Extra...\n");
-      algoritmo_extra(copia, tamanho);
+      printf("Executando Introsort (EXTRA)...\n");
+      introsort(copia, tamanho);
       break;
-    */
     }
 
     printf("Ordenacao concluida!\n");
@@ -195,8 +204,9 @@ void menu_ordenacao(int *vetor, int tamanho) {
 int main() {
   int *vetor = NULL;
   int tamanho = 0;
-  int carregado = 0; /* 1 se ja carregou algum arquivo */
-  int rodou = 0;     /* 1 se ja executou algum algoritmo */
+  int carregado = 0; /* 1 apos carregar um arquivo com sucesso */
+  int rodou = 0;     /* 1 apos executar pelo menos uma busca ou ordenacao,
+                        habilita a geracao do relatorio (opcao 4) */
   int opcao;
   char nome_arquivo[256];
 
@@ -208,8 +218,7 @@ int main() {
     printf("\n--- Menu Principal ---\n");
     printf("1. Carregar arquivo de dados\n");
     printf("2. Buscar elemento (linear ou binaria)\n");
-    printf(
-        "3. Ordenar dados (Insert., Bubble, Selection, Merge, Quick)\n");
+    printf("3. Ordenar dados (Insert., Bubble, Selection, Merge, Quick, Introsort (EXTRA))\n");
     printf("4. Gerar relatorio (Log)\n");
     printf("5. Sair\n");
     printf("Escolha: ");
@@ -218,7 +227,7 @@ int main() {
 
     switch (opcao) {
     case 1:
-      /* se ja tinha algo carregado, libera antes de carregar outro */
+      /* se ja havia um vetor carregado, ele libera a memoria antes de carregar outro */
       if (vetor != NULL) {
         free(vetor);
         vetor = NULL;
@@ -233,7 +242,7 @@ int main() {
         printf("Arquivo '%s' carregado com sucesso! (%d elementos)\n",
                nome_arquivo, tamanho);
         carregado = 1;
-        rodou = 0; /* novo arquivo: invalida qualquer execucao anterior */
+        rodou = 0; /* novo arquivo invalida execucoes anteriores */
       } else {
         printf("Erro ao carregar o arquivo '%s'.\n", nome_arquivo);
         carregado = 0;
@@ -263,7 +272,7 @@ int main() {
         printf("Execute algum algoritmo antes de gerar o relatorio.\n");
         break;
       }
-      /* roda cada algoritmo N vezes (100 para ate 100k, 1 para 1M) e salva a media */
+      /* executa todos os algoritmos N vezes, calcula a media e salva em log.txt */
       printf("Gerando relatorio (media aritmetica das execucoes)...\n");
       gerar_log(vetor, tamanho, "log.txt");
       printf("Relatorio salvo em 'log.txt'.\n");

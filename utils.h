@@ -1,5 +1,5 @@
 /*
- * Funcoes auxiliares (tempo, verificacao, etc.)
+ * utils.h - Funcoes auxiliares compartilhadas entre os modulos
  */
 
 #ifndef UTILS_H

@@ -1,12 +1,14 @@
 /*
- * Implementacao de algumas funcoes auxiliares
+ * utils.c - Funcoes auxiliares compartilhadas entre os modulos
  */
 
 #include "utils.h"
 #include <stdlib.h>
 #include <string.h>
 
-/* copia o vetor e retorna o ponteiro, NULL se der erro */
+/* aloca um novo vetor e copia o conteudo de origem para ele usando memcpy
+   Retorna o ponteiro para a copia, ou NULL se a alocacao falhar
+   O chamador é responsavel por dar free() na copia quando nao precisar mais. */
 int *copiar_vetor(int *origem, int tamanho) {
   int *copia;
 
@@ -23,7 +25,8 @@ int *copiar_vetor(int *origem, int tamanho) {
   return copia;
 }
 
-/* checa se o vetor ta em ordem crescente */
+/* verifica se o vetor esta em ordem crescente nao-decrescente (a[i] <= a[i+1]).
+   Retorna 1 se ordenado (ou vazio/unitario), 0 se encontrar algum par fora de ordem */
 int verificar_ordenacao(int *vetor, int tamanho) {
   int i;
 

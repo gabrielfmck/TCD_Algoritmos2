@@ -5,9 +5,9 @@ Trabalho de Conclusão de Disciplina — Algoritmos II
 ## Descrição
 
 Programa em C que carrega uma lista de números inteiros de um arquivo de texto
-e permite ao usuário realizar buscas (linear e binária) e ordenações com cinco
-algoritmos, além de gerar um relatório de desempenho com os tempos médios de
-cada algoritmo. Um sexto algoritmo extra será adicionado posteriormente.
+e permite ao usuário realizar buscas (linear e binária) e ordenações com seis
+algoritmos diferentes, além de gerar um relatório de desempenho com os tempos
+médios de cada algoritmo.
 
 ## Arquivos do Projeto
 
@@ -16,7 +16,7 @@ TCD_Alg2/
 ├── main.c          -> menu principal e controle do programa
 ├── arquivo.c/.h    -> carrega e salva arquivos de dados
 ├── busca.c/.h      -> busca linear e binaria
-├── ordenacao.c/.h  -> insertion, bubble, selection, merge, quick (+ extra a definir)
+├── ordenacao.c/.h  -> insertion, bubble, selection, merge, quick e introsort
 ├── log.c/.h        -> gera o relatorio log.txt
 ├── utils.c/.h      -> funcoes auxiliares (copiar vetor, verificar ordenacao)
 ├── dados.txt       -> arquivo de exemplo para testar o programa
@@ -65,7 +65,7 @@ todas as funcionalidades do programa do início ao fim.
 --- Menu Principal ---
 1. Carregar arquivo de dados
 2. Buscar elemento (linear ou binaria)
-3. Ordenar dados (Insert., Bubble, Selection, Merge, Quick)
+3. Ordenar dados (Insert., Bubble, Selection, Merge, Quick, EXTRA)
 4. Gerar relatorio (Log)
 5. Sair
 Escolha: 1
@@ -113,9 +113,10 @@ Escolha: 3
 3. Selection Sort
 4. Merge Sort
 5. Quick Sort
-6. Voltar
-Escolha: 5
-Executando Quick Sort...
+6. Introsort (extra)
+7. Voltar
+Escolha: 6
+Executando Introsort (extra)...
 Ordenacao concluida!
 Deseja salvar o vetor ordenado em um arquivo? (s/n): s
 Digite o nome do arquivo de saida: saida_ordenada.txt
@@ -135,6 +136,7 @@ Medindo Bubble Sort...
 Medindo Selection Sort...
 Medindo Merge Sort...
 Medindo Quick Sort...
+Medindo Introsort...
 Medindo Busca Linear...
 Medindo Busca Binaria...
 Relatorio salvo em 'log.txt'.
@@ -168,11 +170,12 @@ Submenu com Busca Linear (funciona em qualquer vetor) e Busca Binária (exige
 vetor ordenado). O tempo é exibido com 9 casas decimais (precisão de nanosegundos).
 
 **Opção 3 — Ordenar dados**
-Submenu com os 5 algoritmos. Após ordenar, o vetor principal é atualizado.
+Submenu com os 6 algoritmos. Após ordenar, o vetor principal é atualizado.
 
 **Opção 4 — Gerar relatório**
 Executa cada algoritmo 100 vezes (para vetores até 100k elementos) e registra
-a média aritmética em `log.txt`, junto com verificação de corretude.
+a média aritmética em `log.txt`, junto com verificação de corretude e
+justificativa do algoritmo extra.
 
 **Opção 5 — Sair**
 Libera toda a memória alocada e encerra.
@@ -189,9 +192,19 @@ Um número inteiro por linha, sem cabeçalho:
 73
 ```
 
-## Algoritmo Extra
+## Algoritmo Extra — Introsort
 
-A ser definido. O algoritmo extra será implementado e documentado aqui.
+O algoritmo extra escolhido foi o **Introsort**.
+
+Ele combina três algoritmos para garantir bom desempenho em qualquer situação:
+- usa **Insertion Sort** para subarrays pequenos (menos de 16 elementos)
+- usa **Quick Sort** com pivô no meio para o caso geral
+- cai para **Heap Sort** se a recursão ficar muito funda (evita O(n²))
+
+A profundidade máxima permitida é `2 * floor(log2(n))`. Por usar o elemento
+do meio como pivô, ele se sai bem mesmo em vetores já ordenados — ao contrário
+do Quick Sort clássico com pivô no final, que degenera nesses casos.
+É o algoritmo que o C++ usa internamente no `std::sort()`.
 
 ## Relatório de Tempos (médias de 100 execuções)
 
@@ -205,7 +218,7 @@ Arquivo de entrada: preencher com quantidade de elementos
 | Selection Sort         | (rodar e preencher) |
 | Merge Sort             | (rodar e preencher) |
 | Quick Sort             | (rodar e preencher) |
-| Algoritmo Extra        | (a definir)         |
+| Introsort              | (rodar e preencher) |
 
 > Os valores acima são gerados automaticamente pelo programa na opção 4
 > e salvos no arquivo `log.txt`.

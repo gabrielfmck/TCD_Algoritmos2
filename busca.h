@@ -1,5 +1,8 @@
 /*
- * busca.h - Algoritmos de busca
+ * busca.h - Prototipos dos algoritmos de busca
+ *
+ * Busca Linear:  O(n)       - funciona em qualquer vetor
+ * Busca Binaria: O(log n)   - exige vetor em ordem crescente
  */
 
 #ifndef BUSCA_H
