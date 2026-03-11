@@ -58,7 +58,7 @@ int carregar_arquivo(char *nome_arquivo, int **vetor, int *tamanho) {
   return 0;
 }
 
-/* salva o vetor num arquivo txt, um numero por linha */
+/* salva o vetor num arquivo .txt, um numero por linha */
 int salvar_vetor(char *nome_arquivo, int *vetor, int tamanho) {
   FILE *arq;
   int i;

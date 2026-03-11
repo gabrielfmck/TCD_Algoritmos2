@@ -1,6 +1,6 @@
 # TCD - Algoritmos de Busca e Ordenação
 
-Trabalho de Conclusão de Disciplina — Algoritmos II
+Trabalho de Conclusão de Disciplina - Algoritmos II
 
 ## Descrição
 
@@ -160,24 +160,24 @@ Ate logo!
 
 ### Detalhes de cada opção
 
-**Opção 1 — Carregar arquivo de dados**
+**Opção 1 - Carregar arquivo de dados**
 Informe o nome do arquivo (deve estar na mesma pasta do programa). Cada linha
 do arquivo deve conter um número inteiro. O vetor é redimensionado dinamicamente
 conforme o arquivo é lido.
 
-**Opção 2 — Buscar elemento**
+**Opção 2 - Buscar elemento**
 Submenu com Busca Linear (funciona em qualquer vetor) e Busca Binária (exige
 vetor ordenado). O tempo é exibido com 9 casas decimais (precisão de nanosegundos).
 
-**Opção 3 — Ordenar dados**
+**Opção 3 - Ordenar dados**
 Submenu com os 6 algoritmos. Após ordenar, o vetor principal é atualizado.
 
-**Opção 4 — Gerar relatório**
+**Opção 4 - Gerar relatório**
 Executa cada algoritmo 100 vezes (para vetores até 100k elementos) e registra
 a média aritmética em `log.txt`, junto com verificação de corretude e
 justificativa do algoritmo extra.
 
-**Opção 5 — Sair**
+**Opção 5 - Sair**
 Libera toda a memória alocada e encerra.
 
 ## Formato do Arquivo de Entrada
@@ -192,7 +192,7 @@ Um número inteiro por linha, sem cabeçalho:
 73
 ```
 
-## Algoritmo Extra — Introsort
+## Algoritmo Extra - Introsort
 
 O algoritmo extra escolhido foi o **Introsort**.
 
@@ -202,7 +202,7 @@ Ele combina três algoritmos para garantir bom desempenho em qualquer situação
 - cai para **Heap Sort** se a recursão ficar muito funda (evita O(n²))
 
 A profundidade máxima permitida é `2 * floor(log2(n))`. Por usar o elemento
-do meio como pivô, ele se sai bem mesmo em vetores já ordenados — ao contrário
+do meio como pivô, ele se sai bem mesmo em vetores já ordenados, ao contrário
 do Quick Sort clássico com pivô no final, que degenera nesses casos.
 É o algoritmo que o C++ usa internamente no `std::sort()`.
 
