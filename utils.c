@@ -8,7 +8,7 @@
 
 /* aloca um novo vetor e copia o conteudo de origem para ele usando memcpy
    Retorna o ponteiro para a copia, ou NULL se a alocacao falhar
-   O chamador é responsavel por dar free() na copia quando nao precisar mais. */
+   quem usar essa funcao deve dar free() no ponteiro retornado quando nao precisar mais. */
 int *copiar_vetor(int *origem, int tamanho) {
   int *copia;
 
