@@ -18,7 +18,7 @@
  *
  * Vantagem: eh excelente para vetores pequenos ou quase ordenados (com poucos deslocamentos).
  */
-void insertion_sort(int *vetor, int tamanho) {
+void insertion_sort(int vetor[], int tamanho) {
   int i, j, chave;
 
   for (i = 1; i < tamanho; i++) {
@@ -46,7 +46,7 @@ void insertion_sort(int *vetor, int tamanho) {
  * Otimizacao com a "trocou": se uma passagem completa nao realizou nenhuma
  * troca, o vetor ja esta ordenado e o algoritmo encerra de forma antecipada
  */
-void bubble_sort(int *vetor, int tamanho) {
+void bubble_sort(int vetor[], int tamanho) {
   int i, j, tmp;
   int trocou;
 
@@ -81,7 +81,7 @@ void bubble_sort(int *vetor, int tamanho) {
  * Caracteristica dele: faz sempre n*(n-1)/2 comparacoes, mas no maximo n-1 trocas.
  * Mesmo que o vetor ja esteja ordenado, ele percorre tudo do mesmo jeito.
  */
-void selection_sort(int *vetor, int tamanho) {
+void selection_sort(int vetor[], int tamanho) {
   int i, j, min, tmp;
 
   for (i = 0; i < tamanho - 1; i++) {
@@ -107,21 +107,15 @@ void selection_sort(int *vetor, int tamanho) {
  * Funcao aux do Merge Sort: ele intercala dois subarrays adjacentes ja ordenados...
  * vetor[esq..meio] e vetor[meio+1..dir] sao copiados para buffers temporarios
  * e depois recolocados em ordem crescente de volta em vetor[esq..dir]
- * Usa a alocacao dinamica para os buffers, e libera no final.
+ * Usa arrays de tamanho variavel para os buffers temporarios.
  */
-void merge(int *vetor, int esq, int meio, int dir) {
+void merge(int vetor[], int esq, int meio, int dir) {
   int i, j, k;
   int tam_esq = meio - esq + 1;
   int tam_dir = dir - meio;
 
-  int *tmp_esq = (int *)malloc(tam_esq * sizeof(int));
-  int *tmp_dir = (int *)malloc(tam_dir * sizeof(int));
-
-  if (tmp_esq == NULL || tmp_dir == NULL) {
-    free(tmp_esq);
-    free(tmp_dir);
-    return;
-  }
+  int tmp_esq[tam_esq]; /* array temporario, sem alocacao dinamica (malloc) */
+  int tmp_dir[tam_dir];
 
   for (i = 0; i < tam_esq; i++)
     tmp_esq[i] = vetor[esq + i];
@@ -155,14 +149,11 @@ void merge(int *vetor, int esq, int meio, int dir) {
     j++;
     k++;
   }
-
-  free(tmp_esq);
-  free(tmp_dir);
 }
 
 /* divide recursivamente ate subarrays de 1 elemento (caso base, ja ordenado),
    depois sobe na recursao unindo os pares com merge() */
-void merge_sort_rec(int *vetor, int esq, int dir) {
+void merge_sort_rec(int vetor[], int esq, int dir) {
   int meio;
 
   if (esq >= dir)
@@ -185,7 +176,7 @@ void merge_sort_rec(int *vetor, int esq, int dir) {
  * A vantagem dele: garante O(n log n) sempre, independente da entrada
  * A Desvantagem: precisa de memoria extra para os buffers temporarios do merge
  */
-void merge_sort(int *vetor, int tamanho) {
+void merge_sort(int vetor[], int tamanho) {
   merge_sort_rec(vetor, 0, tamanho - 1);
 }
 
@@ -199,7 +190,7 @@ void merge_sort(int *vetor, int tamanho) {
  * Apos a execucao, todos os elementos a esquerda do pivo sao <= pivo,
  * e todos a direita sao > pivo, e retorna o indice final do pivo.
  */
-int particionar(int *vetor, int esq, int dir) {
+int particionar(int vetor[], int esq, int dir) {
   int meio = esq + (dir - esq) / 2;
   int pivo, i, j, tmp;
 
@@ -222,7 +213,7 @@ int particionar(int *vetor, int esq, int dir) {
 }
 
 /* aplica o particionamento recursivamente nas duas metades geradas pelo pivo */
-void quick_sort_rec(int *vetor, int esq, int dir) {
+void quick_sort_rec(int vetor[], int esq, int dir) {
   int pos;
 
   if (esq >= dir)
@@ -244,7 +235,7 @@ void quick_sort_rec(int *vetor, int esq, int dir) {
  * Na pratica, é um dos algoritmos mais rapidos por ter boa localidade de cache
  * e baixa constante nas operacoes (poucas trocas, o acesso é sequencial a memoria).
  */
-void quick_sort(int *vetor, int tamanho) {
+void quick_sort(int vetor[], int tamanho) {
   quick_sort_rec(vetor, 0, tamanho - 1);
 }
 
@@ -274,7 +265,7 @@ void quick_sort(int *vetor, int tamanho) {
 
 /* subarrays com menos de LIMIAR_INSERCAO elementos sao finalizados
    com insertion sort, que supera o quick sort nessa escala pequena */
-#define LIMIAR_INSERCAO 20
+#define LIMIAR_INSERCAO 16
 
 /*
  * Calcula o limite maximo de profundidade de recursao: 2 * floor(log2(n)).
@@ -283,12 +274,16 @@ void quick_sort(int *vetor, int tamanho) {
  */
 int calc_profundidade(int n) {
   int prof = 0;
-  while (n > 1) { n /= 2; prof++; }
+  int aux = n;
+  while (aux > 1) {
+    aux = aux / 2;
+    prof++;
+  }
   return prof * 2;
 }
 
 /*
- * Sift-down: restaura a propriedade de max-heap a partir do no i
+ * restaura a propriedade de max-heap a partir do no i
  * Compara o no i com seus filhos esquerdo (2i+1) e direito (2i+2)
  * Se algum filho for maior que o pai, troca com o maior e desce
  * recursivamente ate que a propriedade "pai >= filhos" esteja satisfeita
@@ -320,16 +315,15 @@ void heapificar(int *vetor, int n, int i) {
 void heap_sort_parcial(int *vetor, int esq, int dir) {
   int n = dir - esq + 1;
   int i, tmp;
-  int *v = vetor + esq; /* ponteiro para o inicio do trecho a ordenar */
 
   /* fase 1: constroi o max-heap de baixo para cima */
   for (i = n / 2 - 1; i >= 0; i--)
-    heapificar(v, n, i);
+    heapificar(vetor + esq, n, i);
 
   /* fase 2: extrai o maior (raiz) e coloca no final, reduzindo o heap */
   for (i = n - 1; i > 0; i--) {
-    tmp = v[0]; v[0] = v[i]; v[i] = tmp;
-    heapificar(v, i, 0);
+    tmp = vetor[esq]; vetor[esq] = vetor[esq + i]; vetor[esq + i] = tmp;
+    heapificar(vetor + esq, i, 0);
   }
 }
 

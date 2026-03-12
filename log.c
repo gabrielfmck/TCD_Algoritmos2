@@ -25,8 +25,8 @@
 /* numero de repeticoes por algoritmo a cada medicao, a media aritmetica
    suaviza variacao de medicao pelo sistema operacional */
 int calc_reps(int tamanho) {
-  /* para vetores grandes (> 100k), Bubble/Insertion/Selection levariam
-     varios minutos com 100 repeticoes, uma unica execucao ja é suficiente */
+  /* para vetores grandes (> 100k), Bubble/Insertion/Selection levaria
+     varios minutos com 100 repeticoes */
   if (tamanho <= 100000) return 100;
   return 1;
 }

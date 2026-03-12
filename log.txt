@@ -1,0 +1,37 @@
+=== Relatorio de Desempenho ===
+Data/Hora         : 12/03/2026 23:06:58
+Tamanho do vetor  : 50 elementos
+Repeticoes        : 100 execucoes por algoritmo (media aritmetica)
+Elemento buscado  : 26
+
+-------------------------------
+Ordenacao (tempo medio de 100 execucoes):
+-------------------------------
+  Insertion Sort : 0.000000321 s (0.0003 ms)
+  Bubble Sort    : 0.000000308 s (0.0003 ms)
+  Selection Sort : 0.000002156 s (0.0022 ms)
+  Merge Sort     : 0.000013220 s (0.0132 ms)
+  Quick Sort     : 0.000000944 s (0.0009 ms)
+  Introsort [EXTRA] : 0.000000447 s (0.0004 ms)
+
+-------------------------------
+Busca (tempo medio, elemento: 26):
+-------------------------------
+  Busca Linear  : 0.000000030 s (0.0000 ms)  ->  encontrado na posicao 25 (vetor original)
+  Busca Binaria : 0.000000011 s (0.0000 ms)  ->  encontrado na posicao 25 (vetor ordenado)
+
+===============================
+ALGORITMO EXTRA: Introsort
+===============================
+  Origem:        Criado por David Musser (1997). Algoritmo hibrido
+                 que combina Quick Sort, Heap Sort e Insertion Sort.
+  Justificativa: O Quick Sort tem desempenho O(n^2) no pior caso
+                 (ex: vetor ja ordenado com pivo ruim). O Introsort
+                 monitora a profundidade de recursao e, ao ultrapassar
+                 2*log2(n), troca automaticamente para Heap Sort,
+                 garantindo O(n log n) mesmo no pior caso. Para
+                 subvetores pequenos, usa Insertion Sort que e mais
+                 eficiente em cache para poucos elementos.
+  Complexidade:  Melhor: O(n log n) | Medio: O(n log n) | Pior: O(n log n)
+  Resultado: 0.000000447 s (0.0004 ms)
+===============================

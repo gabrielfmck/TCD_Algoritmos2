@@ -47,7 +47,7 @@ int busca_binaria(int *vetor, int tamanho, int elemento) {
     } else if (vetor[meio] < elemento) {
       inicio = meio + 1; /* elemento ta na metade direita */
     } else {
-      fim = meio - 1;    /* elemento ta na metade esquerda */
+      fim = meio - 1; /* elemento ta na metade esquerda */
     }
   }
 
